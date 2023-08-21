@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expected_IO</title>
+    {% include "bootstrap.html" %}
+    {% include "header.html" %}
+</head>
+<body>
+    <main class="position-absolute top-50 start-50 translate-middle">
+        <form action="{% url 'expected_IO:upload' %}" method="post" enctype="multipart/form-data" class="m-auto">
+            <h1>Config Upload Form</h1>
+            <p class="form-text"> Upload N number of encrypted and/or decrypted configs.
+                Configs only need to be uploaded once as encrypted or decrypted. 
+                Duplicates are ok.
+            </p>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="encrypted_configs" class="form-label">Encrypted Configs</label>
+                <div>
+                    <input class="form-control" id="encrypted_configs" name="encrypted_configs" type="file" multiple="multiple" accept=".CFG">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="decrypted_configs" class="form-label">Decrypted Configs</label>
+                <div>
+                    <input class="form-control" id="decrypted_configs" name="decrypted_configs" type="file" multiple="multiple" accept=".txt">
+                </div>
+            </div>
+            <div class="w-100 ">
+                <input class="mt-2 btn btn-primary" type="submit" value="Submit">
+                <button class="mt-2 btn btn-secondary" id="back">Back</button>
+            </div>
+        </form>    
+    </main>
+</body>
+<script>
+    document.getElementById('back').addEventListener('click', event => {
+        window.location.href = "{% url 'expected_IO:index' %}"
+    })
+</script>
+</html>

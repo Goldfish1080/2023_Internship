@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+  <head>    
+    <title>Expected_IO</title>
+    {% include "bootstrap-table.html" %}
+    {% include "header.html" %}
+    {% load custom_filters %} 
+
+
+</head>
+<body>
+    
+<div class="container pt-5">
+    <div class="my-3">
+      <h1 class="float-start"> Expected Results </h1>
+      <div class="clearfix"></div>
+      <h4 class="p-2 float-start"> Config File: {{ file }} </h4>
+
+      <div class="btn-group float-end mb-0 pb-0" role="group" aria-label="Basic mixed styles example">
+        <button id="sync" type="button" class="btn btn-success">
+          <i class="bi bi-cloud-arrow-down"></i>
+          <span class="m-1">Sync</span>
+        </button>
+        <button id="request" type="button" class="btn btn-secondary">
+          <i class="bi bi-plus-lg"></i>
+          <span class="m-1">Add Config</span>
+        </button>
+        <button id="refresh" type="button" class="btn btn-primary">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span class="m-1">Refresh</span>
+        </button>
+      </div>
+    </div>
+   
+    <table     
+      id="table"
+      data-toggle="table"
+      data-height="600"
+      data-filter-control="true"
+    >
+      <thead>
+          <tr>
+            <th data-field="slot and chl" data-filter-control="input">Slot-Chl Number</th>
+            <th data-field="software name" data-filter-control="input">IO Manager Software Name</th>
+            <th data-field="signal" data-filter-control="input">Signal Description</th>
+            <th data-field="config" data-filter-control="input">Configurables</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+          <tr>
+            <td>{{ item.Slot }}-{{ item.Chl }}</td>
+            <td>
+              <table>
+                {% for name in item.IO%}
+                
+                  <tr>
+                      <td>{{ name }}<br><br></td>
+                  </tr>
+           
+                {% endfor %}
+              </table>
+            </td>
+            <td>
+              <table>
+             
+                  {% for key, value in item.items %}
+                    {% if key != 'Slot' and key != 'Chl' and key != 'Configurables' and key != 'IO' %}             
+                        <tr>
+                          <td class="{% if value == 'Active' %}bg-success text-white{% elif value == 'Not Active' %}bg-secondary text-white{% else %}bg-danger text-white{% endif %}">{{ key }}<br><br></td>           
+                        </tr>   
+                     
+                      
+                    {% endif %}         
+                  {% endfor %}
+             
+              </table>
+            </td>
+            <td>
+              <table>
+                {% for config in item.Configurables%}
+                  <tr>
+                      <td>{{ config }}<br><br></td> 
+                  </tr>
+                 
+                {% endfor %}
+              </table>
+            </td>
+            <td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include "alerter.html" %}
+</div>
+<body>
+<script>
+
+  document.getElementById('refresh').addEventListener('click', event => {
+    const today = new Date();
+    const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    alert(`Last Refresh: ${time}`, 'success');
+    $('#table').bootstrapTable('refresh');
+  });
+  document.getElementById('request').addEventListener('click', event => {
+    window.location.href = "{% url 'expected_IO:upload' %}";
+  });
+  document.getElementById('sync').addEventListener('click', async event => {
+    const res = await fetch("{% url 'expected_IO:sync' %}");
+    if (res.ok)
+      alert('Syncing Configs', 'success');
+    else
+      alert('Fail to Sync Configs', 'danger');
+  });
+</script>
+</html>
