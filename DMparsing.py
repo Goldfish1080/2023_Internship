@@ -73,7 +73,7 @@ class Parser:
         data = {}
         
         for l in readfile.readlines(): 
-            #looks for lines such as 007 : Engine_Type = GEVO12_HPCR_T4
+            #looks for lines such as 007 : option = value
             match = re.search(r'(\d{3}) : (\w+) = (\w+)', l)
             #Similar but looks for a * instead of a :
             has_range = re.search(r'(\d{3}) \* (\w+) = (\d+.\d+)\s+R \[(\d+.\d+ \d+.\d+)\]', l)
@@ -108,7 +108,7 @@ class Parser:
         if values:
             if config_params:
                 expr = self.replace_parsed_config(expr, config_params)
-            #From Option 007 : Engine_Type == GEVO12_HPCR_T4 it will become xyz3 ==  GEVO12_HPCR_T4
+            #From Option 007 : Engine == GE it will become xyz3 ==  GE
             expr = self.replace_option_values(expr, values)
 
             expr = self.process_expression(expr)
